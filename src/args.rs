@@ -1,6 +1,21 @@
 extern crate structopt;
 
 use structopt::*;
+use std::error::Error;
+
+
+fn parse_key_val<K, V>(s: &str) -> Result<(K, V), Box<dyn Error>>
+where
+    K: std::str::FromStr,
+    K::Err: Error + 'static,
+    V: std::str::FromStr,
+    V::Err: Error + 'static,
+{
+    let pos = s
+        .find('=')
+        .ok_or_else(|| format!("invalid KEY=value: no `=` found around `{}`", s))?;
+    Ok((s[..pos].parse()?, s[pos + 1..].parse()?))
+}
 
 #[derive(StructOpt, Debug)]
 pub enum Modes {
@@ -43,16 +58,31 @@ pub struct IngestOpts {
 #[derive(StructOpt, Debug)]
 pub struct PermuteOpts {
     /// Expects: -k key,value
-    #[structopt(short, long, use_delimiter = true)]
-    key: Vec<String>,
+    #[structopt(required = true,
+                short, 
+                long, 
+                use_delimiter = true, 
+                parse(try_from_str = parse_key_val),
+                number_of_values = 1)]
+    key: Vec<(String, String)>,
 
     /// Expects a pattern or a file
-    #[structopt(short, long)]
+    #[structopt(required = true, short, long)]
     pattern: String,
+
+    /// Output file
+    #[structopt(short, long)]
+    output: Option<String>,
+    
+    /// Logging
+    #[structopt(long)]
+    #[allow(clippy::option_option)]
+    log: Option<Option<String>>
 }
 
 #[derive(StructOpt, Debug)]
 pub struct SkewerOpts {
     
 }
+
 
