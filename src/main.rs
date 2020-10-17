@@ -1,3 +1,8 @@
+mod args;
+use args::Opts;
+
 fn main() {
-    println!("Hello, world!");
+   let opts = Opts::read();
+   
+   println!("{:?}", opts)
 }
