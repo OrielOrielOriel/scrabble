@@ -1,6 +1,6 @@
 extern crate structopt;
 
-use structopt::*;
+pub use structopt::*;
 use std::error::Error;
 
 
@@ -32,15 +32,21 @@ pub enum Modes {
     Skewer(SkewerOpts),
 }
 #[derive(StructOpt, Debug)]
+#[structopt(name = "scrabble", setting = structopt::clap::AppSettings::SubcommandRequiredElseHelp)]
 pub struct Opts {
     #[structopt(subcommand)]
-    mode: Modes,
+    pub mode: Option<Modes>,
+
+    #[structopt(short, parse(from_occurrences))]
+    pub verbosity: u8,
+
+    #[structopt(long)]
+    pub accessible: bool,
 }
 
 impl Opts {
     pub fn read() -> Self {
         let opts = Opts::from_args();
-        
         opts
     }
 }
@@ -64,20 +70,20 @@ pub struct PermuteOpts {
                 use_delimiter = true, 
                 parse(try_from_str = parse_key_val),
                 number_of_values = 1)]
-    key: Vec<(String, String)>,
+    pub key: Vec<(String, String)>,
 
     /// Expects a pattern or a file
     #[structopt(required = true, short, long)]
-    pattern: String,
+    pub pattern: String,
 
     /// Output file
     #[structopt(short, long)]
-    output: Option<String>,
+    pub output: Option<String>,
     
     /// Logging
     #[structopt(long)]
     #[allow(clippy::option_option)]
-    log: Option<Option<String>>
+    pub log: Option<Option<String>>
 }
 
 #[derive(StructOpt, Debug)]
