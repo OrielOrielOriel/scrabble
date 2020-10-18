@@ -2,6 +2,7 @@ mod args;
 use args::Opts;
 
 mod permute;
+use permute::do_everything;
 
 fn main() {
    let global_opts = Opts::read();
@@ -18,7 +19,7 @@ fn main() {
         println!("Ingest")
      },
      args::Modes::Permute(opts) => {
-        
+        permute::do_everything();
      },
      args::Modes::Skewer(opts) => {
         println!("Skewer")

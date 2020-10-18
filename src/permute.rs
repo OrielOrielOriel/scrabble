@@ -1,5 +1,6 @@
 use string_template::Template;
 use std::collections::HashMap;
+use regex::Regex;
 
 mod read_file {
     use std::{
@@ -10,6 +11,7 @@ mod read_file {
 
     #[derive(Debug)]
     pub struct BufReader {
+        comment_symbol: String,
         reader: io::BufReader<File>,
         buf: Rc<String>,
     }
@@ -19,12 +21,13 @@ mod read_file {
     }
 
     impl BufReader {
-        pub fn open(path: impl AsRef<std::path::Path>) -> io::Result<Self> {
+        pub fn open(path: impl AsRef<std::path::Path>, comment_symbol: String) -> io::Result<Self> {
+            let comment_symbol = comment_symbol;
             let file = File::open(path)?;   
             let reader = io::BufReader::new(file);
             let buf = new_buf();
 
-            Ok(Self { reader, buf })
+            Ok(Self { comment_symbol, reader, buf })
         }
     }
 
@@ -32,7 +35,6 @@ mod read_file {
         type Item = io::Result<Rc<String>>;
 
         fn next(&mut self) -> Option<Self::Item> {
-            let comment_symbol: &str = "#"; // Make changeable via config file
             let buf = match Rc::get_mut(&mut self.buf) {
                 Some(buf) => {
                     buf.clear();
@@ -46,8 +48,19 @@ mod read_file {
 
             self.reader
                 .read_line(buf)
-                .map(|u| if u == 0 || self.buf.starts_with(comment_symbol) { None } else { Some(Rc::clone(&self.buf)) })
+                .map(|u| if u == 0 || self.buf.starts_with(&self.comment_symbol) { None } else { Some(Rc::clone(&self.buf)) })
                 .transpose()
         }
     }
 }
+
+pub fn do_everything() -> std::io::Result<()>{
+    let path = "/home/oriel/Documents/scrabble/src/test/templates.txt";
+    let re = Regex::new()
+    for template in read_file::BufReader::open(path, "#".to_string())? {
+        
+    }
+
+    Ok(())
+}
+
