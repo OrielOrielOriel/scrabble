@@ -1,66 +1,39 @@
-use string_template::Template;
-use std::collections::HashMap;
-use regex::Regex;
-
-mod read_file {
+mod permute {
+    use string_template::Template;
+    use std::collections::HashMap;
+    use regex::Regex;
     use std::{
-        fs::File,
-        io::{self, prelude::*},
+        io::self,
         rc::Rc,
     };
 
     #[derive(Debug)]
-    pub struct BufReader {
-        comment_symbol: String,
-        reader: io::BufReader<File>,
-        buf: Rc<String>,
+    struct Templ {
+        base_template: String,
+        new_template: String,
+        list_of_key_file_length: Vec<vec![Key: String, File: Rc::<String>, Length: u8]>,
     }
 
-    fn new_buf() -> Rc<String> {
-        Rc::new(String::with_capacity(1024)) // Make capacity tweakable
-    }
+    fn init_templ(template: String, keys: Vec<String>) -> Templ {
+        let base_template = template;
 
-    impl BufReader {
-        pub fn open(path: impl AsRef<std::path::Path>, comment_symbol: String) -> io::Result<Self> {
-            let comment_symbol = comment_symbol;
-            let file = File::open(path)?;   
-            let reader = io::BufReader::new(file);
-            let buf = new_buf();
-
-            Ok(Self { comment_symbol, reader, buf })
+        fn parse_base_template(template: String) -> Vec<vec![Key: String, Length: u8]> {
+            for key in keys.iter() {
+                re = 
+            }
+            
         }
-    }
 
-    impl Iterator for BufReader {
-        type Item = io::Result<Rc<String>>;
-
-        fn next(&mut self) -> Option<Self::Item> {
-            let buf = match Rc::get_mut(&mut self.buf) {
-                Some(buf) => {
-                    buf.clear();
-                    buf
-                }
-                None => {
-                    self.buf = new_buf();
-                    Rc::make_mut(&mut self.buf)
-                }
-            };
-
-            self.reader
-                .read_line(buf)
-                .map(|u| if u == 0 || self.buf.starts_with(&self.comment_symbol) { None } else { Some(Rc::clone(&self.buf)) })
-                .transpose()
-        }
+        
     }
 }
 
 pub fn do_everything() -> std::io::Result<()>{
     let path = "/home/oriel/Documents/scrabble/src/test/templates.txt";
-    let re = Regex::new()
+    let re = Regex::new();
     for template in read_file::BufReader::open(path, "#".to_string())? {
         
     }
 
     Ok(())
 }
-
